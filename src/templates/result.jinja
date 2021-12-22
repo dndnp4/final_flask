@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Result Page </title>
+  <meta charset="utf-8">
+  <link href="./css/aws5-result.css" rel="stylesheet">
+  <meta charset="utf-8">
+</head>
+
+<body>
+
+  <span>게임결과</span>
+
+  <div id="result_pick">
+    <div class="center">
+      <div class="container">
+        <figure class="card_best">
+          <div class="ratio-box">
+            <img id="vs_left" src="{{ result }}" class="the-image"
+              width="100%" height="100%" loading="lazy" />
+          </div>
+        </figure>
+      </div>
+      <button class="btn_download" onclick="location.href='{{ result }}'"> 원본 다운로드</button>
+    </div>
+    <p>TOP3</p><br>
+    <main class="container">
+      <figure class="card_1st">
+        <div class="ratio-box">
+          <img id="vs_left" src="{{ top1 }}" class="the-image"
+            width="100%" height="100%" loading="lazy" />
+        </div>
+      </figure>
+      <figure class="card_2nd">
+        <div class="ratio-box">
+          <img id="vs_left" src="{{ top2 }}" class="the-image"
+            width="100%" height="100%" loading="lazy" />
+        </div>
+      </figure>
+      <figure class="card_3rd">
+        <div class="ratio-box">
+          <img id="vs_left" src="{{ top3 }}" class="the-image"
+            width="100%" height="100%" loading="lazy" />
+        </div>
+      </figure>
+    </main>
+    <hr>
+    <div class="bottom_btns">
+      <button class="btn_upload" onclick="document.all.file.click()"> 사진 업로드</button>
+      <button class="btn_replay" onclick="location.href='/'"> 다시하기 </button>
+      <button class="btn_share"> 공유하기 </button>
+    </div>
+    <input type='file' id='file' style="display: none;">
+</body>
+
+</html>

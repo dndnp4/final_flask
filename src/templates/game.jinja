@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Game Page </title>
+    <meta charset="utf-8">
+    <link href="./css/aws5-game.css" rel="stylesheet">
+</head>
+
+<body>
+    <top>
+        <h1> BTC 월드컵 </h1>
+    </top>
+    <h3 id='title'></h3><br>
+    <main class="container">
+        <figure class="card">
+            <div class="ratio-box">
+                <img id="vs_left" src="./img/2.jpg" class="the-image" width="100%" height="100%" loading="lazy" />
+            </div>
+        </figure>
+        <h2> vs </h2>
+        <figure class="card">
+            <div class="ratio-box">
+                <img id="vs_right" src="./img/2.jpg" class="the-image" width="100%" height="100%" loading="lazy" />
+            </div>
+        </figure>
+    </main>
+
+    <bottom>
+        <div class="banner">
+        <div class="section">
+            <input type="radio" name="slide" id="slide01" checked>
+            <input type="radio" name="slide" id="slide02">
+            <input type="radio" name="slide" id="slide03">
+
+            <div class="slidewrap">
+                <ul class="slidelist">
+                    <li>
+                        <a href="https://www.bespinglobal-technologycenter.com/" target="_blank">
+                            <label for="slide03" class="left"></label>
+                            <img src="/img/bespin.jpg">
+                            <label for="slide02" class="right"></label>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.busanit.or.kr/" target="_blank">
+                            <label for="slide01" class="left"></label>
+                            <img src="/img/busanit.jpg">
+                            <label for="slide03" class="right"></label>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://kfq.or.kr/" target="_blank">
+                            <label for="slide02" class="left"></label>
+                            <img src="/img/kfq.jpg">
+                            <label for="slide01" class="right"></label>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <div class="btn">
+            <button id="btn_stop_game" type="button" onclick="location.href='index.html' "> 그만두기 </button>
+        </div>
+    </bottom>
+
+    <script src='/js/jquery-3.5.1.min.js'></script>
+    <script src='/js/axios.min.js'></script>
+    <script>
+        (function () {
+            const images = JSON.parse('{{ images }}');
+            const domain = 'https://js-download.s3.ap-northeast-2.amazonaws.com';
+            const maxRound = '{{ rnd }}';
+            const token = '{{ token }}';
+            const id = '{{ id }}';
+            let currentRound = '{{ rnd }}';
+            
+            const requestResult = async _=>{
+                try {
+                    const res = await axios.post('/game', {
+                        rnd : maxRound,
+                        token,
+                        id,
+                        file_id : images[0].file_id
+                    });
+                    location.href = `/result?game_id=${res.data.game_id}`;
+                    return;
+                }catch(e) {
+                    alert(e.response.data);
+                    return;
+                }
+            }
+
+            const showRound = () => {
+                if(currentRound === 2){
+                    $('#title').text(`결승`);
+                }else {
+                    $('#title').text(`${currentRound} 강`);
+                }
+            }
+            const showImages = (idx1, idx2) => {
+                // $('#area').empty();
+                const img1 = document.getElementById('vs_left');
+                const img2 = document.getElementById('vs_right');
+
+                img1.src = `${domain}/${images[idx1].name}.${images[idx1].type}`;
+                img2.src = `${domain}/${images[idx2].name}.${images[idx2].type}`;
+                img1.onclick = function () {
+                    nextTurn(idx2);
+                }
+                img2.onclick = function () {
+                    nextTurn(idx1);
+                }
+                $('#area').append(img1).append(img2);
+            }
+
+            const nextTurn = async (idx) => {
+                if (currentRound === 1) {
+                    requestResult();
+                    return;
+                }
+                images.splice(idx, 1);
+                if (currentRound / 2 === images.length) {
+                    currentRound /= 2;
+                    if (currentRound === 1) {
+                        requestResult();
+                    }
+                    initWindows();
+                    alert(currentRound + '강 ㄱㄱ');
+                    return;
+                }
+                if (idx % 2 === 1) {
+                    showImages(idx - 3, idx - 2);
+                } else {
+                    showImages(idx - 2, idx - 1);
+                }
+            }
+
+            const initWindows = _ => {
+                images.sort(_ => Math.random() - 0.5);
+                showImages(currentRound - 1, currentRound - 2);
+                showRound();
+            }
+            initWindows();
+        })();
+    </script>
+</body>
+
+</html>

@@ -7,9 +7,10 @@ from .encrypt import create_salt
 default_dir = "./uploaded"
 
 def s3_connection():
-  s3 = boto3.client('s3',
-    aws_access_key_id = AWSConfig.AWS_ACCESS_KEY,
-    aws_secret_access_key = AWSConfig.AWS_SECRET_KEY)
+  # s3 = boto3.client('s3',
+  #   aws_access_key_id = AWSConfig.AWS_ACCESS_KEY,
+  #   aws_secret_access_key = AWSConfig.AWS_SECRET_KEY)
+  s3 = boto3.client('s3')
   return s3
 
 def get_temp_dir():

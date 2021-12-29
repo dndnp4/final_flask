@@ -130,7 +130,8 @@
                         requestResult();
                     }
                     initWindows();
-                    alert(currentRound + '강 시작합니다.');
+                    if(currentRound === 2) alert('결승전 시작합니다.');
+                    else alert(currentRound + '강 시작합니다.');
                     return;
                 }
                 if (idx % 2 === 1) {

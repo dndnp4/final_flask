@@ -1,6 +1,6 @@
 import json
 from flask import current_app as app
-from flask import Flask, request, Response, render_template, jsonify, make_response
+from flask import Flask, request, Response, render_template, jsonify, make_response, redirect, url_for
 from .models import Users, File, GameToken, GameResult
 from .encrypt import create_salt, encrypt_password
 from .uploader import run, get_object_list
@@ -66,6 +66,7 @@ def uploader():
     else:
         # please only image types.........
         # file = request.files['file']
+        game_id = request.args.get('game_id')
         files = request.files.getlist('file')
         for file in files:
             temp = file.filename.split('.')
@@ -74,7 +75,8 @@ def uploader():
             file.filename = new_filename + '.' + ext
             run(file)
             File.insert(new_filename, ext)
-        return Response(status=200)
+        return redirect(url_for('result', game_id=game_id))
+        # return make_response('완료', 200)
 
 @app.route('/game', methods=['GET', 'POST'])
 def game():
@@ -138,6 +140,7 @@ def result():
             top1='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top1.name, top1.type),
             top2='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top2.name, top2.type),
             top3='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top3.name, top3.type),
+            game_id=game_id
         )
     except Exception as e:
         print(e)

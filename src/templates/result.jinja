@@ -50,11 +50,20 @@
     </main>
     <hr>
     <div class="bottom_btns">
+      <form  action = "/uploader?game_id={{game_id}}" method = "POST" id='form'
+        enctype = "multipart/form-data">
+        <input type='file' name='file' id='file' style="display: none;" multiple/>
+      </form>
       <button class="btn_upload" onclick="document.all.file.click()"> 사진 업로드</button>
       <button class="btn_replay" onclick="location.href='/'"> 다시하기 </button>
       <button class="btn_share" onclick="location.href='/gallery'"> 갤러리 </button>
     </div>
-    <input type='file' id='file' multiple style="display: none;">
+    <script>
+      console.log(document.all.file);
+      document.getElementById("file").onchange = function() {
+        document.getElementById("form").submit();
+      };
+    </script>
 </body>
 
 </html>

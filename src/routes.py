@@ -22,8 +22,8 @@ def sign_up():
 
         result = Users.insert(id, encrypted, salt)
         if result :
-            send_email()
-            send_sms()
+            send_email(id)
+            send_sms(id)
             return '계정이 생성되었습니다.'
         raise Exception('AlreadyExist')    
     except Exception as e:

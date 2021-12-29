@@ -3,7 +3,7 @@ import boto3
 from config import AWSConfig
 
 
-SUBJECT = "AWS5-Project-Signup!"
+SUBJECT = "[ %s ] AWS5-Project-Signup!"
 BODY_TEXT = ("Player Sign-up!"
             )
 BODY_HTML = """<html>
@@ -29,7 +29,7 @@ def sns_connection():
     sns = boto3.client('sns', region_name='ap-northeast-1')
     return sns
 
-def send_email():
+def send_email(name):
     ses = ses_connection()
     res = ses.send_email(
         Destination={
@@ -50,7 +50,7 @@ def send_email():
             },
             'Subject': {
                 'Charset': CHARSET,
-                'Data': SUBJECT,
+                'Data': SUBJECT % (name),
             }
         },
         Source='BTC  <%s>' % (AWSConfig.SES_EMAIL),
@@ -59,11 +59,11 @@ def send_email():
     print(res)
     return
 
-def send_sms():
+def send_sms(name):
     sns = sns_connection()
     res = sns.publish(
         PhoneNumber="+8201025859452",
-        Message="회원이 추가되었습니다."
+        Message="%s 회원님이 추가되었습니다." % (name)
     )
     print(res)
     return

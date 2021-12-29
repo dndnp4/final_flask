@@ -25,6 +25,10 @@ def ses_connection():
     ses = boto3.client('ses', region_name='ap-northeast-2')
     return ses
 
+def sns_connection():
+    sns = boto3.client('sns', region_name='ap-northeast-1')
+    return sns
+
 def send_email():
     ses = ses_connection()
     res = ses.send_email(
@@ -51,6 +55,15 @@ def send_email():
         },
         Source='BTC  <%s>' % (AWSConfig.SES_EMAIL),
         ConfigurationSetName=AWSConfig.SES_CONFIG_SET_NAME
+    )
+    print(res)
+    return
+
+def send_sms():
+    sns = sns_connection()
+    res = sns.publish(
+        PhoneNumber="+8201025859452",
+        Message="회원이 추가되었습니다."
     )
     print(res)
     return

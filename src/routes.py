@@ -4,7 +4,7 @@ from flask import Flask, request, Response, render_template, jsonify, make_respo
 from .models import Users, File, GameToken, GameResult
 from .encrypt import create_salt, encrypt_password
 from .uploader import run, get_object_list
-from .notify import send_email
+from .notify import send_email, send_sms
 from config import AWSConfig
 
 @app.route('/signup', methods=['POST'])
@@ -23,6 +23,7 @@ def sign_up():
         result = Users.insert(id, encrypted, salt)
         if result :
             send_email()
+            send_sms()
             return '계정이 생성되었습니다.'
         raise Exception('AlreadyExist')    
     except Exception as e:
@@ -145,7 +146,6 @@ def result():
 @app.route('/gallery', methods=['GET'])
 def gallery():
     try:
-        # images = get_object_list()
         images = File.get_all()
         return render_template(
             'gallery.jinja',

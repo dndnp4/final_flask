@@ -25,6 +25,20 @@ def create_hashed_name(filename):
     ext = temp[-1]
     return {'name' : create_salt(20), 'ext' : ext }
 
+def get_object_list():
+    result = []
+    s3 = s3_connection()
+    paginator = s3.get_paginator('list_objects_v2')
+    pages = paginator.paginate(Bucket=AWSConfig.TUMB_BUCKET_NAME)
+    for page in pages:
+        for content in page['Contents']:
+            result.append(content['Key'])
+    return result
+    # obj_list = s3.list_objects(Bucket=AWSConfig.TUMB_BUCKET_NAME)
+    # print(obj_list)
+    # for x in obj_list['Contents']:
+    #     print(x)
+
 def run(file):
     path = os.path.join(get_temp_dir(), file.filename)
     file.save(path)

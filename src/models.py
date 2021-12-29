@@ -124,6 +124,10 @@ class File(db.Model):
         record = File(name, type, datetime.now().replace(microsecond=0))
         db.session.add(record)
         db.session.commit()
+        
+    def get_all():
+        record = File.query.order_by(db.desc(File.file_id)).all()
+        return record
 
     def get_file_by_game_id(game_id):
         # join not working..... 

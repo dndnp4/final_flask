@@ -3,7 +3,8 @@ from flask import current_app as app
 from flask import Flask, request, Response, render_template, jsonify, make_response
 from .models import Users, File, GameToken, GameResult
 from .encrypt import create_salt, encrypt_password
-from .uploader import run
+from .uploader import run, get_object_list
+from .notify import send_email
 from config import AWSConfig
 
 @app.route('/signup', methods=['POST'])
@@ -21,9 +22,11 @@ def sign_up():
 
         result = Users.insert(id, encrypted, salt)
         if result :
+            send_email()
             return '계정이 생성되었습니다.'
         raise Exception('AlreadyExist')    
     except Exception as e:
+        print(e)
         e = str(e)
         message = ''
         if e == 'Unmatched':
@@ -61,13 +64,15 @@ def uploader():
         return render_template('uploader.html')
     else:
         # please only image types.........
-        file = request.files['file']
-        temp = file.filename.split('.')
-        new_filename = create_salt(20).hex()
-        ext = temp[-1]
-        file.filename = new_filename + '.' + ext
-        run(file)
-        File.insert(new_filename, ext)
+        # file = request.files['file']
+        files = request.files.getlist('file')
+        for file in files:
+            temp = file.filename.split('.')
+            new_filename = create_salt(20).hex()
+            ext = temp[-1]
+            file.filename = new_filename + '.' + ext
+            run(file)
+            File.insert(new_filename, ext)
         return Response(status=200)
 
 @app.route('/game', methods=['GET', 'POST'])
@@ -80,8 +85,10 @@ def game():
             
             if not GameToken.is_valid_token(id, token):
                 raise
+
             if rnd in ['32', '16', '8'] :
                 return render_template('game.jinja', 
+                    domain=AWSConfig.ORIGIN_BUCKET_DOMAIN,
                     images=File.get_files_by_rnd(rnd), 
                     rnd=rnd, 
                     token=token,
@@ -127,10 +134,33 @@ def result():
         return render_template(
             'result.jinja', 
             result='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, file_data.name, file_data.type),
-            top1='%s/%s.%s' % (AWSConfig.TUMB_BUCKET_DOMAIN, top1.name, top1.type),
-            top2='%s/%s.%s' % (AWSConfig.TUMB_BUCKET_DOMAIN, top2.name, top2.type),
-            top3='%s/%s.%s' % (AWSConfig.TUMB_BUCKET_DOMAIN, top3.name, top3.type),
+            top1='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top1.name, top1.type),
+            top2='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top2.name, top2.type),
+            top3='%s/%s.%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, top3.name, top3.type),
         )
     except Exception as e:
         print(e)
         return 'Error'
+
+@app.route('/gallery', methods=['GET'])
+def gallery():
+    try:
+        # images = get_object_list()
+        images = File.get_all()
+        return render_template(
+            'gallery.jinja',
+            images=images,
+            origin=AWSConfig.ORIGIN_BUCKET_DOMAIN,
+            thumb=AWSConfig.TUMB_BUCKET_DOMAIN
+        )
+    except Exception as e:
+        print(e)
+        return 'Error'
+
+@app.route('/origin', methods=['GET'])
+def origin():
+    src = request.args.get('src')
+    return render_template(
+        'origin.jinja',
+        src='%s/%s' % (AWSConfig.ORIGIN_BUCKET_DOMAIN, src)
+    )

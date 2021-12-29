@@ -73,7 +73,7 @@
     <script>
         (function () {
             const images = JSON.parse('{{ images }}');
-            const domain = 'https://js-download.s3.ap-northeast-2.amazonaws.com';
+            const domain = '{{ domain }}';
             const maxRound = '{{ rnd }}';
             const token = '{{ token }}';
             const id = '{{ id }}';
@@ -130,7 +130,7 @@
                         requestResult();
                     }
                     initWindows();
-                    alert(currentRound + '강 ㄱㄱ');
+                    alert(currentRound + '강 시작합니다.');
                     return;
                 }
                 if (idx % 2 === 1) {

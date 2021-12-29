@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Grid Page </title>
+    <link href="/css/aws5-grid.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+      <h1>AWS5Team Gallery</h1>
+      <div class="container">
+        <div class="images">
+          <div class="imageFlex1">
+
+          </div>
+        </div>
+        <div class="images">
+          <div class="imageFlex2">
+
+          </div>
+        </div>
+        <div class="images">
+          <div class="imageFlex3">
+
+          </div>
+        </div>
+        <div class="images">
+          <div class="imageFlex4">
+
+          </div>
+        </div>
+        <div class="images">
+          <div class="imageFlex5">
+
+          </div>
+        </div>
+        <div class="images">
+          <div class="imageFlex6">
+
+          </div>
+        </div>
+      </div>
+    </body>
+    <script src='/js/jquery-3.5.1.min.js'></script>
+    <script>
+      (function(){
+        const images = JSON.parse('{{ images }}');
+        const origin_domain = '{{ origin }}';
+        const thumb_domain = '{{ thumb }}';
+        let idx = 0;
+          console.log(images);
+          images.map(function(item){
+            let img = document.createElement('img');
+            img.src = `${thumb_domain}/${item.name}.${item.type}`
+            img.onclick = function(){
+              window.open(`/origin?src=${item.name}.${item.type}`);
+            }
+            idx = (idx % 6) + 1;
+            $(`.imageFlex${idx}`).append(img);
+          });
+      })();
+    </script>
+</html>

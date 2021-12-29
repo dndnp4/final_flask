@@ -49,7 +49,6 @@
         const origin_domain = '{{ origin }}';
         const thumb_domain = '{{ thumb }}';
         let idx = 0;
-          console.log(images);
           images.map(function(item){
             let img = document.createElement('img');
             img.src = `${thumb_domain}/${item.name}.${item.type}`
